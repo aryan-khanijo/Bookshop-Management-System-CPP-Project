@@ -12,7 +12,7 @@
 #define PASS /*put the password of MySQL in here between ""*/
 #define DATABASE "Management"
 #define PORT 3306
-#define PASSWORD /*Set a Numeric Password for Your Database*/
+#define PASSWORD /*Set a Numeric Password for Your Application*/
 
 using namespace std;
 
