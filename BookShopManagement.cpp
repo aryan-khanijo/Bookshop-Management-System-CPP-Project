@@ -9,15 +9,15 @@
 #include <conio.h>
 #define HOST "127.0.0.1"
 #define USER "root"
-#define PASS "1234"
-#define DATABASE "cpp1"
+#define PASS /*put the password of MySQL in here between ""*/
+#define DATABASE "Management"
 #define PORT 3306
-#define PASSWORD 2000
+#define PASSWORD /*Set a Numeric Password for Your Database*/
 
 using namespace std;
 
 // +--------------------------------+
-// |		Global Variable			|
+// |		Global Variable     |
 // +--------------------------------+
 
 MYSQL * conn;
@@ -1049,7 +1049,7 @@ void pass()
 }
 
 // +----------------------------------+
-// |		Main Function 			  |
+// |		Main Function 	      |
 // +----------------------------------+
 
 int main()
