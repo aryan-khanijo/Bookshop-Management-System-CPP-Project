@@ -4,13 +4,13 @@
 
 #include <iostream>
 #include <windows.h>
-#include <mysql.h>
+#include <sql.h> /* use <mysql.h> when MYSQL is used as per the code below*/
 #include <sstream>
 #include <conio.h>
 #define HOST "127.0.0.1"
 #define USER "root"
 #define PASS /*put the password of MySQL in here between ""*/
-#define DATABASE "Management"
+#define DATABASE "HR.XE" /*DB name 'Management' */
 #define PORT 3306
 #define PASSWORD /*Set a Numeric Password for Your Application*/
 
@@ -19,6 +19,7 @@ using namespace std;
 // +--------------------------------+
 // |		Global Variable     |
 // +--------------------------------+
+
 
 MYSQL * conn;
 MYSQL_RES *res_set;
@@ -47,6 +48,7 @@ class books
 	string auth;
 	int price;
 	int qty;
+	int yearPub; 
 public:
 	void add();
 	void update_price();
@@ -152,12 +154,14 @@ void books::add()
 	cin >> name;
 	cout << "Enter the name of the author : ";
 	cin >> auth;
+	cout >> "Published in:";
+	cin << yearPub; 
 	cout << "Enter the Price : ";
 	cin >> price;
 	cout << "Enter the Qty Recived : ";
 	cin >> qty;
 	stmt.str("");
-	stmt << "Insert into books(name,auth,price,qty) values('" << name << "','" << auth << "'," << price << "," << qty << ");";
+	stmt << "Insert into books(name,auth,price,qty) values('" << name << "','" << auth << "', " << yearPub <<"; " << price << "," << qty << ");";
 	query = stmt.str();
 	q = query.c_str();
 	mysql_query(conn,q);
@@ -174,7 +178,7 @@ void books::update_price()
     cout << "Enter the id of the book for update in price : ";
     cin >> id;
     stmt.str("");
-    stmt << "Select name,price from books where id = " << id << ";";
+    stmt << "Select name and price of the books where id = " << id << ";";
     query = stmt.str();
     q = query.c_str();
     mysql_query(conn,q);
@@ -222,13 +226,14 @@ void books::search()
     {
 		cout << "The Details of Book Id " << row[0] << endl;
         cout << "The Name of the book is : " << row[1] << endl ;
-		cout << "THE Author of " << row[1] << " is " << row[2] << endl;
-        cout << "The Price of the book is : " << row[3] << endl ;
-		cout << "The inventory count is " << row[4] << endl;
+		cout << "The Author of " << row[1] << " is " << row[2] << endl;
+		cout << "The Book was Published in: " << row[3] << endl; 
+        cout << "The Price of the book is : " << row[4] << endl ;
+		cout << "Inventory count is: " << row[5] << endl;
 	}
 	else
 	{
-		cout << "No record Found" << endl;
+		cout << "No record Found with id: " << id << "." << endl;
 	}
 }
 
@@ -275,9 +280,10 @@ void books::display()
 	{
 		cout << "Name for book " << ++i << " : " << row[1] << endl;
 		cout << "Name of Author : " << row[2] << endl;
-		cout << "Price : " << row[3] << endl;
-		cout << "Quantity : " << row[4] << endl;
-		cout << endl << endl << endl << endl ;
+		cout << "Year Published : " << row[3] << endl;
+		cout << "Price : " << row[4] << endl;
+		cout << "Quantity : " << row[5] << endl;
+		cout << endl << endl << endl << endl << endl ;
 	}
 }
 
@@ -503,7 +509,7 @@ void employees::assign_mgr_stat()
 	res_set = mysql_store_result(conn);
 	if ((row = mysql_fetch_row(res_set)) == NULL)
 	{
-		cout << "Employee Not Found!!" << endl << endl << endl;
+		cout << "Error. Employee not found." << endl << endl << endl;
 		return;
 	}
 	else
@@ -511,11 +517,11 @@ void employees::assign_mgr_stat()
 		mgr_status = (char*) row[0];
 		if (mgr_status == "T")
 		{
-			cout << "You Do Not have Manager Rights!!!" << endl << endl ;
+			cout << "Error. You do not have manager rights." << endl << endl ;
 			return;
 		}
 	}
-	cout << "Enter the employee id to grant Manager status : ";
+	cout << "Enter the employee id to grant Managerial status : ";
 	cin >> id;
 	stmt.str("");
 	stmt << "update employees set mgr_stat = 'T' where id = " << id << ";";
@@ -523,7 +529,7 @@ void employees::assign_mgr_stat()
 	q = query.c_str();
 	mysql_query(conn,q);
 	cout << endl << endl << endl;
-	cout << "Manager Status granted";
+	cout << "Manager Status granted.";
 	cout << endl << endl << endl;
 }
 
@@ -549,7 +555,7 @@ void employees::search_emp()
 	}
 	else
 	{
-		cout << "No Employee Found!!" << endl << endl << endl;
+		cout << "Error.No employee found" << endl << endl << endl;
 	}
 }
 
@@ -564,7 +570,7 @@ void employees::display()
     {
        do
        {
-    	cout << "Employees Details of Emp no." << ++i << endl ;
+    	cout << "Details of employee with employee number: " << ++i << endl ;
         cout << "Name : " << row[1] <<endl;
 		cout << "Address : " << endl << row[2] << endl << row[3] << endl << row[4] << endl;
 		cout << "State : " << row[5] << endl;
@@ -576,7 +582,7 @@ void employees::display()
     }
 	else
 	{
-		cout << "Employees Not found!" << endl;
+		cout << "Employee not found." << endl;
 	}
 }
 
@@ -661,7 +667,7 @@ void members::search_mem()
 	}
 	else
 	{
-		cout << "No Member Found!!" << endl << endl << endl;
+		cout << "No member found." << endl << endl << endl;
 	}
 }
 
@@ -671,7 +677,7 @@ void members::search_mem()
 
 void sales::add()
 {
-	cout << "Enter Menber id :";
+	cout << "Enter Member id :";
 	cin >> member_id;
 	cout << "Enter the book id : ";
 	cin  >> book_id;
@@ -690,18 +696,18 @@ void sales::add()
 	}
 	else
 	{
-		cout << "Book Id invalid!!" << endl;
+		cout << "Error.Invalid book id." << endl;
 		getch();
 		return;
 	}
 	stmt.str("");
-	stmt << "insert into sales(mem_id,book_id,qty,amt,sales_date) values (" << member_id << "," << book_id << "," << qty << "," << amount << ",curdate());";
+	stmt << "Insert into sales(mem_id,book_id,qty,amt,sales_date) values (" << member_id << "," << book_id << "," << qty << "," << amount << ",curdate());";
 	query = stmt.str();
 	q = query.c_str();
 	mysql_query(conn,q);
 	// fetching invoice id...
 	stmt.str("");
-	stmt << "select inv_id from sales where mem_id = " << member_id << " AND book_id = " << book_id << " AND qty = " << qty << " AND sales_date = curdate();";
+	stmt << "Select inv_id from sales where mem_id = " << member_id << " AND book_id = " << book_id << " AND qty = " << qty << " AND sales_date = curdate();";
 	query = stmt.str();
 	q = query.c_str();
 	mysql_query(conn,q);
@@ -1069,8 +1075,9 @@ int main()
 	else
 	{
 	    system("cls");
-		cout << "Error While connection to database." << endl << "Contact Tech Expert." << endl;
+		cout << "Error occured while connecting to the database." << endl << "Contact technical support." << endl;
 		getch();
 	}
 	return 0;
 }
+*/
